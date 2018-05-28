@@ -39,4 +39,4 @@ spec:
             - name: WEB_ENDPOINT_URL
               value: http://localhost:{{ .Values.nodewebimage.port }}
           command: ["virtual-kubelet"]
-          args: ["--provider", "web", "--nodename", {{ default "web-provider-node" .Values.env.nodeName | quote }}]
+          args: ["--provider", "web", "--nodename", {{ default .Values.env.nodeName | quote }}]

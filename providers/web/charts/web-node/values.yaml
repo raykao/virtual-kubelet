@@ -8,4 +8,4 @@ vkimage:
   tag: latest
   pullPolicy: Always
 env:
-  nodeName: vk-web-node
+  nodeName: vk-nodejs-webprovider
