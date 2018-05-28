@@ -1,0 +1,11 @@
+nodewebimage:
+  repository: raykao/web-node
+  tag: latest
+  pullPolicy: Always
+  port: 3000
+vkimage:
+  repository: microsoft/virtual-kubelet
+  tag: latest
+  pullPolicy: Always
+env:
+  nodeName: vk-web-node

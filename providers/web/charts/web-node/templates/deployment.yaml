@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "virtual-kubelet-web.fullname" . }}
+  labels:
+    app: {{ template "virtual-kubelet-web.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "virtual-kubelet-web.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "virtual-kubelet-web.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: webnode
+          image: "{{ .Values.nodewebimage.repository }}:{{ .Values.nodewebimage.tag }}"
+          imagePullPolicy: {{ .Values.nodewebimage.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.nodewebimage.port }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.nodewebimage.port }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.nodewebimage.port }}
+        - name: virtualkubelet
+          image: "{{ .Values.vkimage.repository }}:{{ .Values.vkimage.tag }}"
+          imagePullPolicy: {{ .Values.vkimage.pullPolicy }}
+          env:
+            - name: WEB_ENDPOINT_URL
+              value: http://localhost:{{ .Values.nodewebimage.port }}
+          command: ["virtual-kubelet"]
+          args: ["--provider", "web", "--nodename", {{ default "web-provider-node" .Values.env.nodeName | quote }}]
